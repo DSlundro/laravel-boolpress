@@ -14,4 +14,19 @@ class PostController extends Controller
 
         return $posts;
     }
+
+    public function show($slug)
+    {
+        $post = Post::where('slug', $slug)->first();
+        if ($post) {
+            return $post;
+        } else {
+            return response()->json(
+                [
+                    'status_code' => 404,
+                    'status_message' => 'Page Not Found'
+                ]
+            );
+        }
+    }
 }

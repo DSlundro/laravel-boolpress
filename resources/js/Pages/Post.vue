@@ -5,8 +5,6 @@
         class="p-5"
         :style="{
           backgroundImage: 'url(/storage/' + post.cover_image + ')',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
         }"
       >
         <div class="container">
@@ -43,11 +41,11 @@
                   {{ post.category.name }}
                 </span>
 
-                <div class="tags" v-if="post.tags.length > 0">
+                <div class="tags">
                   <strong>Tags:</strong>
                   <ul class="list-unstyled">
                     <li v-for="tag in post.tags" :key="tag.id">
-                      {{ tag.name }}
+                      #{{ tag.name }}
                     </li>
                   </ul>
                 </div>
@@ -57,8 +55,8 @@
         </div>
       </div>
     </div>
-    <div class="loading" v-else>
-        ⏲️ Loading
+    <div class="loading text-center pt-5" v-else>
+        <h2>Loading...</h2>
     </div>
   </div>
 </template>
@@ -68,21 +66,31 @@ export default {
   name: "Post",
   data() {
     return {
-      post: "",
+      post: [],
       loading:true,
     };
   },
-  methods: {},
+methods: {
+    getPost() {
+      axios
+        .get("/api/posts/" + this.$route.params.slug)
+        .then((response) => {
+            console.log(response.data);
+          if (response.data.status_code === 404) {
+            this.loading = false;
+            this.$router.push({ name: "not-found" });
+          } else {
+            this.post = response.data;
+            this.loading = false;
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    },
+  },
   mounted() {
-    axios
-      .get("/api/posts/" + this.$route.params.slug)
-      .then((response) => {
-        this.post = response.data;
-        this.loading = false
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+    this.getPost();
   },
 };
 </script>

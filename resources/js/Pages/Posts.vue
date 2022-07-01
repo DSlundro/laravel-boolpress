@@ -1,28 +1,12 @@
 <template>
   <div>
-    <banner-component></banner-component>
+    <BannerComponent />
     <div class="container-fluid">
       <div class="row">
-        <div class="col-2">
-          <aside class="py-5">
-            <div class="widget categories p-3">
-              <h2>All Categories</h2>
-              <ul class="list-unstyled">
-                <li v-for="category in categories" :key="category.id">
-                  {{ category.name }}
-                </li>
-              </ul>
-            </div>
-            <div class="widget tags p-3">
-              <h2>All Tags</h2>
-              <ul class="list-unstyled">
-                <li v-for="tag in tags" :key="tag.id">
-                  {{ tag.name }}
-                </li>
-              </ul>
-            </div>
-          </aside>
-        </div>
+        <AsideComponent 
+        :categories="categories"
+        :tags="tags"
+        />
         <div class="col-10">
           <main class="py-5">
             <section class="posts">
@@ -32,6 +16,7 @@
                     class="col"
                     v-for="post in posts_response.data"
                     :key="post.id"
+                    :post="post"
                   >
                     <div class="product card h-100 m-3">
                       <img
@@ -136,12 +121,14 @@
 </template>
 
 <script>
+import AsideComponent from '../components/AsideComponent.vue';
 import BannerComponent from "../components/BannerComponent.vue";
 
 export default {
   name: "Posts",
   components: {
     BannerComponent,
+    AsideComponent,
   },
   data() {
     return {
@@ -169,7 +156,8 @@ export default {
       axios
         .get("/api/categories")
         .then((response) => {
-          this.categories = response.data;
+          this.categories = response.data.data;
+          //console.log(this.categories);
         })
         .catch((e) => {
           console.error(e);
@@ -179,7 +167,8 @@ export default {
       axios
         .get("/api/tags")
         .then((response) => {
-          this.tags = response.data;
+          this.tags = response.data.data;
+          // console.log(this.tags);
         })
         .catch((e) => {
           console.error(e);
@@ -203,12 +192,5 @@ export default {
 
 
 <style lang="scss" scoped>
-aside{
-    .widget{
-        padding: 0.5rem;
-        border-radius: 1rem;
-        margin-bottom: 1rem;
-        background-color: rgb(227, 223, 223);
-    }
-}
+
 </style>
